@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Store, Phone, ArrowRight, Loader2 } from 'lucide-react';
+import aiImage from '../assets/merchant-ai-scene.png';
 
 const MerchantLogin = ({ onLogin, isLoggingIn, onSwitchRole }) => {
   const [loginName, setLoginName] = useState('');
@@ -20,11 +21,31 @@ const MerchantLogin = ({ onLogin, isLoggingIn, onSwitchRole }) => {
           <div className="absolute -top-20 -right-20 w-64 h-64 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
           <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
           
-          <div className="relative z-10 flex items-center gap-3 mb-12">
+          <div className="relative z-10 flex items-center gap-3 mb-8">
             <div className="p-2 bg-white/10 rounded-xl backdrop-blur-sm border border-white/10">
               <Store size={24} className="text-indigo-400" />
             </div>
             <span className="text-xl font-bold tracking-tight">Sales Copilot</span>
+          </div>
+
+          <div className="relative z-10 flex-1 flex flex-col items-center justify-center min-h-[220px] mb-8 group perspective-1000">
+            <div className="relative w-full max-w-[280px] aspect-square rounded-4xl overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.1)] border border-white/10 bg-white/5 cursor-pointer transform-style-3d group-hover:rotate-y-6 group-hover:-rotate-x-6 transition-transform duration-700">
+              <img 
+                src={aiImage} 
+                alt="AI Merchant Technology" 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+              />
+              
+              {/* Overlay Gradient */}
+              <div className="absolute inset-0 bg-linear-to-tr from-indigo-500/30 to-transparent opacity-40 mix-blend-overlay pointer-events-none"></div>
+              
+              {/* Floating Data Nodes */}
+              <div className="absolute top-1/4 left-1/4 w-2 h-2 rounded-full bg-white shadow-[0_0_15px_white] animate-ping pointer-events-none" style={{ animationDuration: '3s' }}></div>
+              <div className="absolute bottom-1/3 right-1/4 w-1.5 h-1.5 rounded-full bg-indigo-300 shadow-[0_0_15px_#818cf8] animate-ping pointer-events-none" style={{ animationDuration: '2s', animationDelay: '1s' }}></div>
+              <div className="absolute top-[40%] right-[30%] w-2.5 h-2.5 rounded-full bg-purple-300 shadow-[0_0_15px_#d8b4fe] animate-ping pointer-events-none" style={{ animationDuration: '4s', animationDelay: '0.5s' }}></div>
+              
+              <div className="absolute inset-0 border-[2px] border-white/0 group-hover:border-indigo-400/40 transition-colors duration-500 rounded-4xl pointer-events-none z-30"></div>
+            </div>
           </div>
 
           <div className="relative z-10 mt-auto">

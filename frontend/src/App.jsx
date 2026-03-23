@@ -143,7 +143,14 @@ function App() {
       {/* Top Navbar */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-primary-600">
+          <div 
+            className="flex items-center gap-2 text-primary-600 cursor-pointer hover:opacity-80 transition-opacity" 
+            onClick={() => { 
+              setMerchant(null); 
+              localStorage.removeItem('merchant');
+              setUserRole(null); 
+            }}
+          >
             <Store size={24} className="stroke-[2.5]" />
             <h1 className="font-bold text-xl tracking-tight text-slate-900">AI Sales Copilot</h1>
           </div>

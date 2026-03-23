@@ -18,7 +18,7 @@ const LandingPage = ({ onSelectRole }) => {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/50 border border-slate-700/50 text-indigo-300 text-sm font-medium mb-8 backdrop-blur-sm">
             <Sparkles size={14} className="animate-pulse" />
-            <span>Introducing AI Sales Copilot 2.0</span>
+            <span >Introducing AI Sales Copilot 2.0</span>
           </div>
           
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8">
