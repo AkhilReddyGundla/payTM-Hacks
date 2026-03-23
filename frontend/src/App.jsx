@@ -15,11 +15,17 @@ import PendingCredits from './components/PendingCredits';
 import SmartOffers from './components/SmartOffers';
 import PremiumDigest from './components/PremiumDigest';
 import CustomerDashboard from './components/CustomerDashboard';
+import LandingPage from './components/LandingPage';
+import MerchantLogin from './components/MerchantLogin';
 import api from './api';
 
 function App() {
   const [activeTab, setActiveTab] = useState('add');
-  const [userRole, setUserRole] = useState('MERCHANT'); // 'MERCHANT' | 'CUSTOMER'
+  const [userRole, setUserRole] = useState(() => {
+    if (localStorage.getItem('merchant')) return 'MERCHANT';
+    if (localStorage.getItem('customerPhone')) return 'CUSTOMER';
+    return null;
+  }); // null shows the landing page
   
   // Auth state
   const [merchant, setMerchant] = useState(() => {
@@ -42,12 +48,11 @@ function App() {
     { id: 'premium', label: 'AI Digest', icon: Sparkles },
   ];
 
-  const handleMerchantLogin = async (e) => {
-    e.preventDefault();
-    if (!loginPhone || !loginName) return;
+  const handleMerchantLogin = async (merchantName, merchantPhone) => {
+    if (!merchantPhone || !merchantName) return;
     try {
       setIsLoggingIn(true);
-      const res = await api.post('/merchants/register', { name: loginName, phone: loginPhone });
+      const res = await api.post('/merchants/register', { name: merchantName, phone: merchantPhone });
       setMerchant(res.data);
       localStorage.setItem('merchant', JSON.stringify(res.data));
     } catch (e) {
@@ -66,37 +71,53 @@ function App() {
 
   const currentMerchantId = merchant ? merchant._id : '';
 
+  // Landing Page
+  if (!userRole) {
+    return <LandingPage onSelectRole={setUserRole} />;
+  }
+
   // Rendering Login Screens if needed
   if (userRole === 'MERCHANT' && !merchant) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 w-full max-w-sm">
-          <div className="flex justify-center mb-6 text-primary-600"><Store size={48} /></div>
-          <h2 className="text-2xl font-bold text-center mb-6 text-slate-800">Merchant Login</h2>
-          <form onSubmit={handleMerchantLogin} className="space-y-4">
-            <input type="text" placeholder="Store Name" value={loginName} onChange={e=>setLoginName(e.target.value)} required className="w-full p-3 border rounded-xl" />
-            <input type="tel" placeholder="Phone Number" value={loginPhone} onChange={e=>setLoginPhone(e.target.value)} required className="w-full p-3 border rounded-xl" />
-            <button type="submit" disabled={isLoggingIn} className="w-full bg-primary-600 text-white font-bold py-3 rounded-xl disabled:opacity-50">
-              {isLoggingIn ? 'Entering...' : 'Enter Store'}
-            </button>
-          </form>
-          <button onClick={() => setUserRole('CUSTOMER')} className="mt-4 w-full text-slate-500 text-sm font-medium hover:text-slate-800">Switch to Customer View</button>
-        </div>
-      </div>
+      <MerchantLogin 
+        onLogin={handleMerchantLogin}
+        isLoggingIn={isLoggingIn}
+        onSwitchRole={() => setUserRole('CUSTOMER')} 
+      />
     );
   }
 
   if (userRole === 'CUSTOMER' && !customerPhone) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 w-full max-w-sm">
-          <div className="flex justify-center mb-6 text-indigo-500"><CreditCard size={48} /></div>
-          <h2 className="text-2xl font-bold text-center mb-6 text-slate-800">Customer Login</h2>
-          <form onSubmit={handleCustomerLogin} className="space-y-4">
-            <input type="tel" placeholder="Your Phone Number" value={loginPhone} onChange={e=>setLoginPhone(e.target.value)} required className="w-full p-3 border rounded-xl" />
-            <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700">View My Dues</button>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 selection:bg-emerald-100 selection:text-emerald-900">
+        <div className="bg-white p-10 rounded-3xl shadow-xl border border-slate-100 w-full max-w-md">
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 bg-emerald-100/50 rounded-2xl flex items-center justify-center shadow-inner border border-emerald-100">
+              <CreditCard size={32} className="text-emerald-500" />
+            </div>
+          </div>
+          <h2 className="text-3xl font-bold text-center mb-2 text-slate-900 tracking-tight">Check Dues</h2>
+          <p className="text-center text-slate-500 mb-8 max-w-xs mx-auto text-sm">Enter your phone number to check pending balances across stores.</p>
+          <form onSubmit={handleCustomerLogin} className="space-y-5">
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-slate-700 ml-1">Phone Number</label>
+              <input 
+                type="tel" 
+                placeholder="Enter 10-digit number" 
+                value={loginPhone} 
+                onChange={e=>setLoginPhone(e.target.value)} 
+                required 
+                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium text-slate-900 placeholder:font-normal placeholder:text-slate-400" 
+              />
+            </div>
+            <button type="submit" className="w-full mt-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/30 hover:-translate-y-0.5">
+              View My Dues
+            </button>
           </form>
-          <button onClick={() => setUserRole('MERCHANT')} className="mt-4 w-full text-slate-500 text-sm font-medium hover:text-slate-800">Switch to Merchant View</button>
+          <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+            <p className="text-sm text-slate-500 mb-2">Are you a merchant?</p>
+            <button onClick={() => setUserRole('MERCHANT')} className="text-emerald-600 text-sm font-semibold hover:text-emerald-800 transition-colors">Switch to Merchant Dashboard</button>
+          </div>
         </div>
       </div>
     );
@@ -122,7 +143,14 @@ function App() {
       {/* Top Navbar */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-primary-600">
+          <div 
+            className="flex items-center gap-2 text-primary-600 cursor-pointer hover:opacity-80 transition-opacity" 
+            onClick={() => { 
+              setMerchant(null); 
+              localStorage.removeItem('merchant');
+              setUserRole(null); 
+            }}
+          >
             <Store size={24} className="stroke-[2.5]" />
             <h1 className="font-bold text-xl tracking-tight text-slate-900">AI Sales Copilot</h1>
           </div>
