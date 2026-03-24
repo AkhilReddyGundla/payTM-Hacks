@@ -12,7 +12,12 @@ require('./src/utils/cron')();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://paytm-hacks-frontend.vercel.app'
+  ],
+  credentials: true
+}));
 app.use(express.json());
 
 // Basic Route
