@@ -1,7 +1,11 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api', // Proxied to localhost:5000 in dev
+  // In development (localhost), use '/api' to trigger Vite's proxy.
+  // In production (Vercel), hit the deployed backend directly.
+  baseURL: import.meta.env.MODE === 'production' 
+    ? 'https://paytm-hacks.vercel.app/api' 
+    : '/api', 
   headers: {
     'Content-Type': 'application/json'
   }
